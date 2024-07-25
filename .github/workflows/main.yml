@@ -27,22 +27,29 @@ jobs:
       run: |
         python checker_zora.py
 
+    - name: Format results for Markdown
+      run: |
+        awk '{print $0 "  "}' results.txt > formatted_results.txt
+
     - name: Update README.md with results
       run: |
         echo "# Zora Report" > README.md
         echo "## Results" >> README.md
-        cat results.txt >> README.md
+        cat formatted_results.txt >> README.md
         echo "## Chart" >> README.md
         echo "![Number of Holders by Quantity](holders_by_quantity.png)" >> README.md
 
     - name: Commit and push results if there are changes
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PAT: ${{ secrets.PAT }}
       run: |
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
-        git add README.md holders_by_quantity.png results.txt
+        git add README.md holders_by_quantity.png results.txt formatted_results.txt
         if [ -n "$(git status --porcelain)" ]; then
           git commit -m 'Update README.md with Zora report'
-          git push
+          git push https://${{ secrets.PAT }}@github.com/marblerace/zoraHolders.git
         else
           echo "No changes to commit"
         fi
