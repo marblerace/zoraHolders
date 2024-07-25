@@ -25,7 +25,7 @@ jobs:
 
     - name: Run zora checker
       run: |
-        python zora_checker.py
+        python checker_zora.py
 
     - name: Update README.md with results
       run: |
