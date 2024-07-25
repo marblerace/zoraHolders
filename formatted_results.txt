@@ -1,5 +1,3 @@
-# Zora Report
-## Results
 Total holders: 1947  
 Holders with >5: 333  
 Holders with >10: 155  
@@ -12,5 +10,3 @@ Min quantity: 1
 Max quantity: 284  
 Median quantity: 2.0  
 Mean quantity: 4.757575757575758  
-## Chart
-![Number of Holders by Quantity](holders_by_quantity.png)
