@@ -1,0 +1,48 @@
+name: Generate Zora Report
+
+on:
+  push:
+    branches:
+      - main  # Change this to your default branch if it's not 'main'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pandas matplotlib
+
+    - name: Run zora checker
+      run: |
+        python zora_checker.py
+
+    - name: Update README.md with results
+      run: |
+        echo "# Zora Report" > README.md
+        echo "## Results" >> README.md
+        cat results.txt >> README.md
+        echo "## Chart" >> README.md
+        echo "![Number of Holders by Quantity](holders_by_quantity.png)" >> README.md
+
+    - name: Commit and push results if there are changes
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'github-actions@github.com'
+        git add README.md holders_by_quantity.png results.txt
+        if [ -n "$(git status --porcelain)" ]; then
+          git commit -m 'Update README.md with Zora report'
+          git push
+        else
+          echo "No changes to commit"
+        fi
