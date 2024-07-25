@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Read the CSV file into a DataFrame
-csv_file = 'zora.csv'
+csv_file = 'data.csv'
 df = pd.read_csv(csv_file)
 
 # Total number of holders
