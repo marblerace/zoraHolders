@@ -46,7 +46,7 @@ jobs:
       run: |
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
-        git add README.md holders_by_quantity.png results.txt formatted_results.txt
+        git add README.md holders_by_quantity.png results.txt previous_results.txt formatted_results.txt
         if [ -n "$(git status --porcelain)" ]; then
           git commit -m 'Update README.md with Zora report'
           git push https://${{ secrets.PAT }}@github.com/marblerace/zoraHolders.git

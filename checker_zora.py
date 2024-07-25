@@ -23,8 +23,44 @@ max_quantity = df['Quantity'].max()
 median_quantity = df['Quantity'].median()
 mean_quantity = df['Quantity'].mean()
 
-# Save the results to a file
+# Read the previous results from previous_results.txt
+try:
+    with open('previous_results.txt', 'r') as file:
+        lines = file.readlines()
+        prev_total_holders = int(lines[0].split(': ')[1])
+        prev_holders_5 = int(lines[1].split(': ')[1])
+        prev_holders_10 = int(lines[2].split(': ')[1])
+        prev_holders_11 = int(lines[3].split(': ')[1])
+        prev_holders_25 = int(lines[4].split(': ')[1])
+        prev_holders_50 = int(lines[5].split(': ')[1])
+        prev_holders_100 = int(lines[6].split(': ')[1])
+        prev_holders_111 = int(lines[7].split(': ')[1])
+        prev_min_quantity = int(lines[8].split(': ')[1])
+        prev_max_quantity = int(lines[9].split(': ')[1])
+        prev_median_quantity = float(lines[10].split(': ')[1])
+        prev_mean_quantity = float(lines[11].split(': ')[1])
+except FileNotFoundError:
+    prev_total_holders = prev_holders_5 = prev_holders_10 = prev_holders_11 = prev_holders_25 = prev_holders_50 = prev_holders_100 = prev_holders_111 = 0
+    prev_min_quantity = prev_max_quantity = 0
+    prev_median_quantity = prev_mean_quantity = 0.0
+
+# Save the current results to results.txt
 with open('results.txt', 'w') as file:
+    file.write(f"Total holders: {total_holders} ({total_holders - prev_total_holders:+d})\n")
+    file.write(f"Holders with >5: {holders_5} ({holders_5 - prev_holders_5:+d})\n")
+    file.write(f"Holders with >10: {holders_10} ({holders_10 - prev_holders_10:+d})\n")
+    file.write(f"Holders with >11: {holders_11} ({holders_11 - prev_holders_11:+d})\n")
+    file.write(f"Holders with >25: {holders_25} ({holders_25 - prev_holders_25:+d})\n")
+    file.write(f"Holders with >50: {holders_50} ({holders_50 - prev_holders_50:+d})\n")
+    file.write(f"Holders with >100: {holders_100} ({holders_100 - prev_holders_100:+d})\n")
+    file.write(f"Holders with >111: {holders_111} ({holders_111 - prev_holders_111:+d})\n")
+    file.write(f"Min quantity: {min_quantity} (previous {prev_min_quantity})\n")
+    file.write(f"Max quantity: {max_quantity} (previous {prev_max_quantity})\n")
+    file.write(f"Median quantity: {median_quantity} (previous {prev_median_quantity})\n")
+    file.write(f"Mean quantity: {mean_quantity} (previous {prev_mean_quantity})\n")
+
+# Save the current results to previous_results.txt
+with open('previous_results.txt', 'w') as file:
     file.write(f"Total holders: {total_holders}\n")
     file.write(f"Holders with >5: {holders_5}\n")
     file.write(f"Holders with >10: {holders_10}\n")
