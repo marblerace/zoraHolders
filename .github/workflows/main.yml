@@ -23,7 +23,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install requests pandas tabulate
+        pip install requests pandas tabulate matplotlib
 
     - name: Run fetch_and_save_holders.py
       run: python fetch_and_save_holders.py
