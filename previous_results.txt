@@ -9,4 +9,4 @@ Holders with >111: 9
 Min balance: 1
 Max balance: 256
 Median balance: 2.0
-Mean balance: 5.139832594780896
+Mean balance: 5.139340226489414
