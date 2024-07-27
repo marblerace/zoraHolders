@@ -5,7 +5,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '0 */8 * * *'  # Runs every 8 hours
 
 jobs:
   build:
@@ -43,6 +43,8 @@ jobs:
         cat formatted_results.txt >> README.md
         echo "## Chart" >> README.md
         echo "![Number of Holders by Quantity](holders_by_quantity.png)" >> README.md
+        echo "## Progression Curve" >> README.md
+        echo "![Progression Curve](progression_curve.png)" >> README.md
 
     - name: Commit and push results if there are changes
       env:
@@ -50,7 +52,7 @@ jobs:
       run: |
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
-        git add README.md holders_by_quantity.png results.txt previous_results.txt formatted_results.txt data.csv
+        git add README.md holders_by_quantity.png progression_curve.png results.txt previous_results.txt formatted_results.txt data.csv
         if [ -n "$(git status --porcelain)" ]; then
           git commit -m 'Update README.md with Zora report and data'
           git push
