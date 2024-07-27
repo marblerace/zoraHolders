@@ -67,8 +67,8 @@ try:
     # Add the current data
     current_time = datetime.datetime.utcnow().strftime('%d-%m-%Y %H:%M')  # European format without seconds and "UTC"
     total_holders = df.shape[0]
-    holders_gt_11 = df[df['Balance'] > 11].shape[0]
-    holders_gt_111 = df[df['Balance'] > 111].shape[0]
+    holders_gt_11 = df[df['Balance'] >= 11].shape[0]
+    holders_gt_111 = df[df['Balance'] >= 111].shape[0]
     new_row = pd.DataFrame({
         'timestamp': [current_time],
         'total_holders': [total_holders],
@@ -95,24 +95,24 @@ try:
         plt.savefig('progression_curve_all.png')
         plt.close()
 
-        # Plot for holders > 11
+        # Plot for holders >= 11
         plt.figure(figsize=(10, 6))
-        plt.plot(progression_df['timestamp'], progression_df['holders_gt_11'], label='Holders >11', color='red')
+        plt.plot(progression_df['timestamp'], progression_df['holders_gt_11'], label='Holders >=11', color='red')
         plt.xlabel('Time')
         plt.ylabel('Number of Holders')
-        plt.title('Progression Curve - Holders >11')
+        plt.title('Progression Curve - Holders >=11')
         plt.xticks(rotation=45)
         plt.yticks(range(0, max(progression_df['holders_gt_11']) + 1))
         plt.tight_layout()
         plt.savefig('progression_curve_gt_11.png')
         plt.close()
 
-        # Plot for holders > 111
+        # Plot for holders >= 111
         plt.figure(figsize=(10, 6))
-        plt.plot(progression_df['timestamp'], progression_df['holders_gt_111'], label='Holders >111', color='blue')
+        plt.plot(progression_df['timestamp'], progression_df['holders_gt_111'], label='Holders >=111', color='blue')
         plt.xlabel('Time')
         plt.ylabel('Number of Holders')
-        plt.title('Progression Curve - Holders >111')
+        plt.title('Progression Curve - Holders >=111')
         plt.xticks(rotation=45)
         plt.yticks(range(0, max(progression_df['holders_gt_111']) + 1))
         plt.tight_layout()
@@ -131,14 +131,14 @@ try:
         print("Progression curve graph for all holders does not exist.")
 
     if os.path.exists('progression_curve_gt_11.png'):
-        print("Progression curve graph for holders >11 exists.")
+        print("Progression curve graph for holders >=11 exists.")
     else:
-        print("Progression curve graph for holders >11 does not exist.")
+        print("Progression curve graph for holders >=11 does not exist.")
 
     if os.path.exists('progression_curve_gt_111.png'):
-        print("Progression curve graph for holders >111 exists.")
+        print("Progression curve graph for holders >=111 exists.")
     else:
-        print("Progression curve graph for holders >111 does not exist.")
+        print("Progression curve graph for holders >=111 does not exist.")
 
     # Update the README.md
     try:
@@ -155,14 +155,14 @@ try:
 
             if previous_df is not None:
                 readme_file.write(f"Holders with >1: {total_holders} ({total_holders - previous_df['total_holders'].iloc[-1]})\n")
-                readme_file.write(f"Holders with >11: {holders_gt_11} ({holders_gt_11 - previous_df['holders_gt_11'].iloc[-1]})\n")
-                readme_file.write(f"Holders with >111: {holders_gt_111} ({holders_gt_111 - previous_df['holders_gt_111'].iloc[-1]})\n")
-                readme_file.write(f"Mean balance: {mean_balance} (previous {previous_mean_balance})\n")
+                readme_file.write(f"Holders with >=11: {holders_gt_11} ({holders_gt_11 - previous_df['holders_gt_11'].iloc[-1]})\n")
+                readme_file.write(f"Holders with >=111: {holders_gt_111} ({holders_gt_111 - previous_df['holders_gt_111'].iloc[-1]})\n")
+                readme_file.write(f"Mean balance: {mean_balance:.2f} (previous {previous_mean_balance:.2f})\n")
             else:
                 readme_file.write(f"Holders with >1: {total_holders}\n")
-                readme_file.write(f"Holders with >11: {holders_gt_11}\n")
-                readme_file.write(f"Holders with >111: {holders_gt_111}\n")
-                readme_file.write(f"Mean balance: {mean_balance}\n")
+                readme_file.write(f"Holders with >=11: {holders_gt_11}\n")
+                readme_file.write(f"Holders with >=111: {holders_gt_111}\n")
+                readme_file.write(f"Mean balance: {mean_balance:.2f}\n")
 
         new_summary_row = pd.DataFrame({
             'total_holders': [total_holders],
