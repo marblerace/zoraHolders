@@ -1,5 +1,5 @@
 # Zora Report
-## Last updated: 27-07-2024 18:33
+## Last updated: 27-07-2024 18:35
 ## Results
 Holders with >1: 2032  
 Holders with >=11: 165  
