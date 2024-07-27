@@ -49,6 +49,9 @@ if data and 'items' in data:
 # Convert the list to a DataFrame
 df = pd.DataFrame(holders_data, columns=['HolderAddress', 'Balance'])
 
+# Ensure the 'Balance' column is converted to integers
+df['Balance'] = pd.to_numeric(df['Balance'], errors='coerce').fillna(0).astype(int)
+
 # Save the DataFrame to a CSV file
 df.to_csv('data.csv', index=False)
 
