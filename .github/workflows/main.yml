@@ -41,14 +41,11 @@ jobs:
         
         echo "# Zora Report" > README.md
         echo "## Report of bought mints on Zora" >> README.md
-        echo "Last updated: $(date -u +"%d-%m-%Y %H:%M")" >> README.md
+        echo "## Last updated: $(date -u +"%d-%m-%Y %H:%M")" >> README.md
         echo "Addresses which held mint at least once: $addresses_held_once" >> README.md
         echo "" >> README.md
         echo "## Current holders:" >> README.md
-        echo "Holders with >1: $total_holders" >> README.md
-        echo "Holders with >=11: $holders_gt_11" >> README.md
-        echo "Holders with >=111: $holders_gt_111" >> README.md
-        echo "Mean balance: $mean_balance" >> README.md
+        while IFS= read -r line; do echo "$line  "; done < results.txt >> README.md
         echo "" >> README.md
         echo "## Progression Curve - All Holders" >> README.md
         echo "![Progression Curve - All Holders](progression_curve_all.png)" >> README.md
