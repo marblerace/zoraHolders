@@ -1,61 +1,108 @@
-name: Generate Zora Report
+import requests
+import pandas as pd
+import datetime
+import matplotlib.pyplot as plt
+import os
 
-on:
-  push:
-    branches:
-      - main
-  schedule:
-    - cron: '0 */8 * * *'  # Runs every 8 hours
+# API base URL for the first page
+base_url = "https://explorer.zora.energy/api/v2/tokens/0x7777777d57c1C6e472fa379b7b3B6c6ba3835073/holders"
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+# Initialize an empty list to store the data
+holders_data = []
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+# Function to fetch data
+def fetch_data(url):
+    try:
+        response = requests.get(url, headers={'accept': 'application/json'})
+        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed: {e}")
+        return None
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
+# Fetch the first page
+data = fetch_data(base_url)
+if data and 'items' in data:
+    items = data.get('items', [])
+    holders_data.extend([[item['address']['hash'], item['value']] for item in items])
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install requests pandas tabulate matplotlib
+    # Handle pagination using next_page_params
+    while 'next_page_params' in data:
+        next_page_params = data['next_page_params']
+        if next_page_params:
+            address_hash = next_page_params.get('address_hash')
+            items_count = next_page_params.get('items_count')
+            value = next_page_params.get('value')
+            next_page_url = f"{base_url}?address_hash={address_hash}&items_count={items_count}&value={value}"
+            data = fetch_data(next_page_url)
+            if data and 'items' in data:
+                items = data.get('items', [])
+                holders_data.extend([[item['address']['hash'], item['value']] for item in items])
+                print(f"Fetched page with params: {next_page_params}")
+            else:
+                print("No more data found or failed to fetch data.")
+                break
+        else:
+            print("No more pages to fetch.")
+            break
 
-    - name: Run fetch_and_save_holders.py
-      run: python fetch_and_save_holders.py
+# Convert the list to a DataFrame
+df = pd.DataFrame(holders_data, columns=['HolderAddress', 'Balance'])
 
-    - name: Run zora checker
-      run: python checker_zora.py
+# Save the DataFrame to a CSV file
+df.to_csv('data.csv', index=False)
 
-    - name: Format results for Markdown
-      run: |
-        awk '{print $0 "  "}' results.txt > formatted_results.txt
+# Read or initialize progression data
+progression_file = 'progression_data.csv'
+if os.path.exists(progression_file):
+    progression_df = pd.read_csv(progression_file)
+else:
+    progression_df = pd.DataFrame(columns=['timestamp', 'total_holders', 'holders_gt_11', 'holders_gt_111'])
 
-    - name: Update README.md with results
-      run: |
-        echo "# Zora Report" > README.md
-        echo "## Last updated: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> README.md
-        echo "## Results" >> README.md
-        cat formatted_results.txt >> README.md
-        echo "## Chart" >> README.md
-        echo "![Number of Holders by Quantity](holders_by_quantity.png)" >> README.md
-        echo "## Progression Curve" >> README.md
-        echo "![Progression Curve](progression_curve.png)" >> README.md
+# Add the current data
+current_time = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')
+total_holders = df.shape[0]
+holders_gt_11 = df[df['Balance'] > 11].shape[0]
+holders_gt_111 = df[df['Balance'] > 111].shape[0]
+new_row = {
+    'timestamp': current_time,
+    'total_holders': total_holders,
+    'holders_gt_11': holders_gt_11,
+    'holders_gt_111': holders_gt_111
+}
+progression_df = progression_df.append(new_row, ignore_index=True)
 
-    - name: Commit and push results if there are changes
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        git config --global user.name 'github-actions'
-        git config --global user.email 'github-actions@github.com'
-        git add README.md holders_by_quantity.png progression_curve.png results.txt previous_results.txt formatted_results.txt data.csv
-        if [ -n "$(git status --porcelain)" ]; then
-          git commit -m 'Update README.md with Zora report and data'
-          git push
-        else
-          echo "No changes to commit"
-        fi
+# Save the progression data
+progression_df.to_csv(progression_file, index=False)
+
+# Plot the progression curve
+try:
+    plt.figure(figsize=(10, 6))
+    plt.plot(progression_df['timestamp'], progression_df['total_holders'], label='All Holders', color='black')
+    plt.plot(progression_df['timestamp'], progression_df['holders_gt_11'], label='Holders >11', color='red')
+    plt.plot(progression_df['timestamp'], progression_df['holders_gt_111'], label='Holders >111', color='blue')
+    plt.xlabel('Time')
+    plt.ylabel('Number of Holders')
+    plt.title('Progression Curve')
+    plt.legend()
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig('progression_curve.png')
+    plt.close()
+    print("Progression curve graph saved successfully.")
+except Exception as e:
+    print(f"Failed to plot and save progression curve graph: {e}")
+
+# Update the README.md
+try:
+    with open('README.md', 'w') as readme_file:
+        readme_file.write(f"# Zora Token Holders\n\n")
+        readme_file.write(f"## Last updated: {current_time}\n\n")
+        readme_file.write(f"Total holders: {total_holders}\n\n")
+        readme_file.write(f"## Holders Data\n")
+        readme_file.write(df.to_markdown())
+    print("README.md updated successfully.")
+except Exception as e:
+    print(f"Failed to update README.md: {e}")
+
+print("Data fetching and saving completed. Saved to data.csv, progression_data.csv, and README.md updated.")
