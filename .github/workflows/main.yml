@@ -33,14 +33,14 @@ jobs:
         echo "# Zora Report" > README.md
         echo "## Last updated: $(date -u +"%d-%m-%Y %H:%M")" >> README.md
         echo "## Results" >> README.md
-        total_holders=$(tail -n 1 progression_data.csv | cut -d',' -f2)
-        holders_gt_11=$(tail -n 1 progression_data.csv | cut -d',' -f3)
-        holders_gt_111=$(tail -n 1 progression_data.csv | cut -d',' -f4)
-        mean_balance=$(tail -n 1 previous_results.txt | cut -d',' -f4)
-        previous_mean_balance=$(tail -n 2 previous_results.txt | head -n 1 | cut -d',' -f4)
+        total_holders=$(grep 'total_holders' current_results.txt | cut -d',' -f2)
+        holders_gt_11=$(grep 'holders_gt_11' current_results.txt | cut -d',' -f2)
+        holders_gt_111=$(grep 'holders_gt_111' current_results.txt | cut -d',' -f2)
+        mean_balance=$(grep 'mean_balance' current_results.txt | cut -d',' -f2)
         previous_total_holders=$(tail -n 2 previous_results.txt | head -n 1 | cut -d',' -f1)
         previous_holders_gt_11=$(tail -n 2 previous_results.txt | head -n 1 | cut -d',' -f2)
         previous_holders_gt_111=$(tail -n 2 previous_results.txt | head -n 1 | cut -d',' -f3)
+        previous_mean_balance=$(tail -n 2 previous_results.txt | head -n 1 | cut -d',' -f4)
         echo "Holders with >1: $total_holders (previous $previous_total_holders)" >> README.md
         echo "Holders with >=11: $holders_gt_11 (previous $previous_holders_gt_11)" >> README.md
         echo "Holders with >=111: $holders_gt_111 (previous $previous_holders_gt_111)" >> README.md

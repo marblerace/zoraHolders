@@ -81,6 +81,14 @@ try:
     progression_df.to_csv(progression_file, index=False)
     print("Progression data saved successfully.")
 
+    # Generate current_results.txt
+    mean_balance = df['Balance'].mean()
+    with open('current_results.txt', 'w') as f:
+        f.write(f"total_holders,{total_holders}\n")
+        f.write(f"holders_gt_11,{holders_gt_11}\n")
+        f.write(f"holders_gt_111,{holders_gt_111}\n")
+        f.write(f"mean_balance,{mean_balance}\n")
+
     # Plot the progression curves
     def plot_curve(progression_df, column, title, color, file_name):
         plt.figure(figsize=(10, 6))
@@ -123,45 +131,16 @@ try:
     else:
         print("Progression curve graph for holders >=111 does not exist.")
 
-    # Update the README.md
-    try:
-        previous_df = None
-        if os.path.exists('previous_results.txt'):
-            previous_df = pd.read_csv('previous_results.txt')
+    # Update the previous_results.txt with the current results
+    new_summary_row = pd.DataFrame({
+        'total_holders': [total_holders],
+        'holders_gt_11': [holders_gt_11],
+        'holders_gt_111': [holders_gt_111],
+        'mean_balance': [mean_balance]
+    })
+    new_summary_row.to_csv('previous_results.txt', mode='a', header=not os.path.exists('previous_results.txt'), index=False)
 
-        mean_balance = df['Balance'].mean()
-        previous_mean_balance = previous_df['mean_balance'].iloc[-1] if previous_df is not None else mean_balance
-
-        with open('README.md', 'w') as readme_file:
-            readme_file.write(f"# Zora Token Holders\n\n")
-            readme_file.write(f"## Last updated: {current_time}\n\n")
-
-            if previous_df is not None:
-                readme_file.write(f"Holders with >1: {total_holders} ({total_holders - previous_df['total_holders'].iloc[-1]})\n")
-                readme_file.write(f"Holders with >=11: {holders_gt_11} ({holders_gt_11 - previous_df['holders_gt_11'].iloc[-1]})\n")
-                readme_file.write(f"Holders with >=111: {holders_gt_111} ({holders_gt_111 - previous_df['holders_gt_111'].iloc[-1]})\n")
-                readme_file.write(f"Mean balance: {mean_balance:.2f} (previous {previous_mean_balance:.2f})\n")
-            else:
-                readme_file.write(f"Holders with >1: {total_holders}\n")
-                readme_file.write(f"Holders with >=11: {holders_gt_11}\n")
-                readme_file.write(f"Holders with >=111: {holders_gt_111}\n")
-                readme_file.write(f"Mean balance: {mean_balance:.2f}\n")
-
-        new_summary_row = pd.DataFrame({
-            'total_holders': [total_holders],
-            'holders_gt_11': [holders_gt_11],
-            'holders_gt_111': [holders_gt_111],
-            'mean_balance': [mean_balance]
-        })
-
-        new_summary_row.to_csv('previous_results.txt', mode='a', header=not os.path.exists('previous_results.txt'), index=False)
-
-        print("README.md updated successfully.")
-    except Exception as e:
-        print(f"Failed to update README.md: {e}")
-        traceback.print_exc()
-
-    print("Data fetching and saving completed. Saved to data.csv, progression_data.csv, and README.md updated.")
+    print("Data fetching and saving completed. Saved to data.csv, progression_data.csv, current_results.txt, and previous_results.txt updated.")
 
 except Exception as e:
     print(f"An error occurred: {e}")
