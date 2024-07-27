@@ -1,4 +1,0 @@
-Holders with >=1: 2031
-Holders with >=11: 139
-Holders with >=111: 9
-Mean balance: 5.1393402264894142029,165,14,5.192212912764909

@@ -81,13 +81,11 @@ try:
     progression_df.to_csv(progression_file, index=False)
     print("Progression data saved successfully.")
 
-    # Generate current_results.txt
+    # Generate the results directly
     mean_balance = df['Balance'].mean()
-    with open('current_results.txt', 'w') as f:
-        f.write(f"total_holders,{total_holders}\n")
-        f.write(f"holders_gt_11,{holders_gt_11}\n")
-        f.write(f"holders_gt_111,{holders_gt_111}\n")
-        f.write(f"mean_balance,{mean_balance}\n")
+    results = f"Holders with >1: {total_holders}\nHolders with >=11: {holders_gt_11}\nHolders with >=111: {holders_gt_111}\nMean balance: {mean_balance}\n"
+    with open('results.txt', 'w') as f:
+        f.write(results)
 
     # Plot the progression curves
     def plot_curve(progression_df, column, title, color, file_name):
@@ -131,16 +129,7 @@ try:
     else:
         print("Progression curve graph for holders >=111 does not exist.")
 
-    # Update the previous_results.txt with the current results
-    new_summary_row = pd.DataFrame({
-        'total_holders': [total_holders],
-        'holders_gt_11': [holders_gt_11],
-        'holders_gt_111': [holders_gt_111],
-        'mean_balance': [mean_balance]
-    })
-    new_summary_row.to_csv('previous_results.txt', mode='a', header=not os.path.exists('previous_results.txt'), index=False)
-
-    print("Data fetching and saving completed. Saved to data.csv, progression_data.csv, current_results.txt, and previous_results.txt updated.")
+    print("Data fetching and saving completed. Saved to data.csv, progression_data.csv, and results.txt updated.")
 
 except Exception as e:
     print(f"An error occurred: {e}")
