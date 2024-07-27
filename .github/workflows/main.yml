@@ -1,12 +1,11 @@
-name: Generate Zora Report
+name: Update Zora Token Holders
 
 on:
-  push:
-    branches:
-      - main  # Change this to your default branch if it's not 'main'
+  schedule:
+    - cron: '*/10 * * * *'
 
 jobs:
-  build:
+  update_holders:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,36 +20,17 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pandas matplotlib
+        pip install requests pandas
 
-    - name: Run zora checker
-      run: |
-        python checker_zora.py
+    - name: Run fetch_and_save_holders.py
+      run: python fetch_and_save_holders.py
 
-    - name: Format results for Markdown
-      run: |
-        awk '{print $0 "  "}' results.txt > formatted_results.txt
-
-    - name: Update README.md with results
-      run: |
-        echo "# Zora Report" > README.md
-        echo "## Get Data from: https://explorer.zora.energy/csv-export?type=holders&address=0x7777777d57c1C6e472fa379b7b3B6c6ba3835073" >> README.md
-        echo "## Results" >> README.md
-        cat formatted_results.txt >> README.md
-        echo "## Chart" >> README.md
-        echo "![Number of Holders by Quantity](holders_by_quantity.png)" >> README.md
-
-    - name: Commit and push results if there are changes
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PAT: ${{ secrets.PAT }}
+    - name: Commit and push changes
       run: |
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
-        git add README.md holders_by_quantity.png results.txt previous_results.txt formatted_results.txt
-        if [ -n "$(git status --porcelain)" ]; then
-          git commit -m 'Update README.md with Zora report'
-          git push https://${{ secrets.PAT }}@github.com/marblerace/zoraHolders.git
-        else
-          echo "No changes to commit"
-        fi
+        git add data.csv README.md
+        git commit -m "Update holders data and README.md"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
