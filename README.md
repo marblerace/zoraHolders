@@ -1,30 +1,10 @@
 # Zora Report
-## Last updated: 27-07-2024 17:06
+## Last updated: 27-07-2024 17:23
 ## Results
-Total holders: 2031 (+0)
-
-Holders with >5: 354 (+0)
-
-Holders with >10: 164 (+0)
-
-Holders with >11: 139 (+0)
-
-Holders with >25: 57 (+0)
-
-Holders with >50: 28 (+0)
-
-Holders with >100: 15 (+0)
-
-Holders with >111: 9 (+0)
-
-Min balance: 1 (previous 1.0)
-
-Max balance: 256 (previous 256.0)
-
-Median balance: 2.0 (previous 2.0)
-
-Mean balance: 5.139340226489414 (previous 5.139832594780896)
-
+Holders with >1: 2031
+Holders with >=11: 165
+Holders with >=111: 14
+Mean balance: Mean balance: 5.139340226489414 (previous Holders with >111: 9)
 ## Progression Curve - All Holders
 ![Progression Curve - All Holders](progression_curve_all.png)
 ## Progression Curve - Holders >=11
