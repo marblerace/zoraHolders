@@ -65,7 +65,7 @@ try:
         progression_df = pd.DataFrame(columns=['timestamp', 'total_holders', 'holders_gt_11', 'holders_gt_111'])
 
     # Add the current data
-    current_time = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')
+    current_time = datetime.datetime.utcnow().strftime('%d-%m-%Y %H:%M')  # European format without seconds and "UTC"
     total_holders = df.shape[0]
     holders_gt_11 = df[df['Balance'] > 11].shape[0]
     holders_gt_111 = df[df['Balance'] > 111].shape[0]
@@ -83,7 +83,7 @@ try:
 
     # Plot the progression curve
     try:
-        plt.figure(figsize=(10, 6))
+        plt.figure(figsize=(10, 18))  # Making the figure three times higher
         plt.plot(progression_df['timestamp'], progression_df['total_holders'], label='All Holders', color='black')
         plt.plot(progression_df['timestamp'], progression_df['holders_gt_11'], label='Holders >11', color='red')
         plt.plot(progression_df['timestamp'], progression_df['holders_gt_111'], label='Holders >111', color='blue')
