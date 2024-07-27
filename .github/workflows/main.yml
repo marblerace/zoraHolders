@@ -28,8 +28,7 @@ jobs:
     - name: Run fetch_and_save_holders.py
       run: python fetch_and_save_holders.py
 
-    - name:```yaml
-    Update README.md with results
+    - name: Update README.md with results
       run: |
         echo "# Zora Report" > README.md
         echo "## Last updated: $(date -u +"%d-%m-%Y %H:%M")" >> README.md
