@@ -38,9 +38,12 @@ jobs:
         holders_gt_111=$(tail -n 1 progression_data.csv | cut -d',' -f4)
         mean_balance=$(tail -n 1 previous_results.txt | cut -d',' -f4)
         previous_mean_balance=$(tail -n 2 previous_results.txt | head -n 1 | cut -d',' -f4)
-        echo "Holders with >1: $total_holders" >> README.md
-        echo "Holders with >=11: $holders_gt_11" >> README.md
-        echo "Holders with >=111: $holders_gt_111" >> README.md
+        previous_total_holders=$(tail -n 2 previous_results.txt | head -n 1 | cut -d',' -f1)
+        previous_holders_gt_11=$(tail -n 2 previous_results.txt | head -n 1 | cut -d',' -f2)
+        previous_holders_gt_111=$(tail -n 2 previous_results.txt | head -n 1 | cut -d',' -f3)
+        echo "Holders with >1: $total_holders (previous $previous_total_holders)" >> README.md
+        echo "Holders with >=11: $holders_gt_11 (previous $previous_holders_gt_11)" >> README.md
+        echo "Holders with >=111: $holders_gt_111 (previous $previous_holders_gt_111)" >> README.md
         echo "Mean balance: $mean_balance (previous $previous_mean_balance)" >> README.md
         echo "## Progression Curve - All Holders" >> README.md
         echo "![Progression Curve - All Holders](progression_curve_all.png)" >> README.md
