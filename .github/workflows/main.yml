@@ -46,13 +46,24 @@ jobs:
         echo "## Progression Curve" >> README.md
         echo "![Progression Curve](progression_curve.png)" >> README.md
 
+    - name: Check for generated files
+      run: |
+        if [ ! -f progression_curve.png ]; then
+          echo "progression_curve.png does not exist."
+          exit 1
+        fi
+        if [ ! -f progression_data.csv ]; then
+          echo "progression_data.csv does not exist."
+          exit 1
+        fi
+
     - name: Commit and push results if there are changes
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
-        git add README.md holders_by_quantity.png progression_curve.png results.txt previous_results.txt formatted_results.txt data.csv
+        git add README.md holders_by_quantity.png progression_curve.png results.txt previous_results.txt formatted_results.txt data.csv progression_data.csv
         if [ -n "$(git status --porcelain)" ]; then
           git commit -m 'Update README.md with Zora report and data'
           git push
