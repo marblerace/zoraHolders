@@ -33,7 +33,7 @@ jobs:
         echo "# Zora Report" > README.md
         echo "## Last updated: $(date -u +"%d-%m-%Y %H:%M")" >> README.md
         echo "## Results" >> README.md
-        cat results.txt >> README.md
+        while IFS= read -r line; do echo "$line  "; done < results.txt >> README.md
         echo "## Progression Curve - All Holders" >> README.md
         echo "![Progression Curve - All Holders](progression_curve_all.png)" >> README.md
         echo "## Progression Curve - Holders >=11" >> README.md
