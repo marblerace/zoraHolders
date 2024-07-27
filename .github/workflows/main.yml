@@ -66,7 +66,7 @@ jobs:
       run: |
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
-        git add README.md progression_curve_all.png progression_curve_gt_11.png progression_curve_gt_111.png data.csv progression_data.csv previous_results.txt
+        git add README.md progression_curve_all.png progression_curve_gt_11.png progression_curve_gt_111.png data.csv progression_data.csv
         if [ -n "$(git status --porcelain)" ]; then
           git commit -m 'Update README.md with Zora report and data'
           git push

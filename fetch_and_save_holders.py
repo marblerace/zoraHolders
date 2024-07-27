@@ -84,8 +84,6 @@ try:
     # Generate the results directly
     mean_balance = df['Balance'].mean()
     results = f"Holders with >1: {total_holders}\nHolders with >=11: {holders_gt_11}\nHolders with >=111: {holders_gt_111}\nMean balance: {mean_balance}\n"
-    with open('results.txt', 'w') as f:
-        f.write(results)
 
     # Plot the progression curves
     def plot_curve(progression_df, column, title, color, file_name):
@@ -129,7 +127,7 @@ try:
     else:
         print("Progression curve graph for holders >=111 does not exist.")
 
-    print("Data fetching and saving completed. Saved to data.csv, progression_data.csv, and results.txt updated.")
+    print("Data fetching and saving completed. Saved to data.csv, progression_data.csv updated.")
 
 except Exception as e:
     print(f"An error occurred: {e}")
