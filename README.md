@@ -1,5 +1,5 @@
 # Zora Report
-## Last updated: 27-07-2024 16:48
+## Last updated: 27-07-2024 17:06
 ## Results
 Total holders: 2031 (+0)
 
