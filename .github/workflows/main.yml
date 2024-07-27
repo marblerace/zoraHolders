@@ -28,12 +28,28 @@ jobs:
     - name: Run fetch_and_save_holders.py
       run: python fetch_and_save_holders.py
 
-    - name: Update README.md with results
+    - name: Run all_time_holders.py
+      run: python all_time_holders.py
+
+     - name: Update README.md with results
       run: |
+        total_holders=$(tail -n +2 data.csv | wc -l)
+        holders_gt_11=$(awk -F ',' '$2 >= 11' data.csv | wc -l)
+        holders_gt_111=$(awk -F ',' '$2 >= 111' data.csv | wc -l)
+        mean_balance=$(awk -F ',' '{sum+=$2} END {print sum/NR}' data.csv)
+        addresses_held_once=$(tail -n +2 holders.csv | wc -l)
+        
         echo "# Zora Report" > README.md
-        echo "## Last updated: $(date -u +"%d-%m-%Y %H:%M")" >> README.md
-        echo "## Results" >> README.md
-        while IFS= read -r line; do echo "$line  "; done < results.txt >> README.md
+        echo "## Report of bought mints on Zora" >> README.md
+        echo "Last updated: $(date -u +"%d-%m-%Y %H:%M")" >> README.md
+        echo "Addresses which held mint at least once: $addresses_held_once" >> README.md
+        echo "" >> README.md
+        echo "## Current holders:" >> README.md
+        echo "Holders with >1: $total_holders" >> README.md
+        echo "Holders with >=11: $holders_gt_11" >> README.md
+        echo "Holders with >=111: $holders_gt_111" >> README.md
+        echo "Mean balance: $mean_balance" >> README.md
+        echo "" >> README.md
         echo "## Progression Curve - All Holders" >> README.md
         echo "![Progression Curve - All Holders](progression_curve_all.png)" >> README.md
         echo "## Progression Curve - Holders >=11" >> README.md
