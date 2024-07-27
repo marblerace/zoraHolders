@@ -99,6 +99,12 @@ try:
         print(f"Failed to plot and save progression curve graph: {e}")
         traceback.print_exc()
 
+    # Check if progression_curve.png exists
+    if os.path.exists('progression_curve.png'):
+        print("Progression curve graph file exists.")
+    else:
+        print("Progression curve graph file does not exist.")
+
     # Update the README.md
     try:
         with open('README.md', 'w') as readme_file:
