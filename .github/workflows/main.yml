@@ -62,7 +62,6 @@ jobs:
         fi
         if [ ! -f progression_curve_gt_111.png ]; then
           echo "progression_curve_gt_111.png does not exist."
-         ```yaml
           exit 1
         fi
         if [ ! -f progression_data.csv ]; then
