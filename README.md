@@ -1,6 +1,10 @@
 # Zora Report
-## Last updated: 27-07-2024 17:51
+## Last updated: 27-07-2024 17:56
 ## Results
+Holders with >1: 2029
+Holders with >=11: 165
+Holders with >=111: 14
+Mean balance: 5.191720059142435
 ## Progression Curve - All Holders
 ![Progression Curve - All Holders](progression_curve_all.png)
 ## Progression Curve - Holders >=11
