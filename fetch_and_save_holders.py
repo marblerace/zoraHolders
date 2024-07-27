@@ -144,9 +144,10 @@ try:
     try:
         previous_df = None
         if os.path.exists('previous_results.txt'):
-            with open('previous_results.txt') as f:
-                previous_results = f.read()
-            previous_df = pd.read_csv(pd.compat.StringIO(previous_results), sep="\s\s+", engine='python')
+            previous_df = pd.read_csv('previous_results.txt')
+
+        mean_balance = df['Balance'].mean()
+        previous_mean_balance = previous_df['mean_balance'].iloc[-1] if previous_df is not None else mean_balance
 
         with open('README.md', 'w') as readme_file:
             readme_file.write(f"# Zora Token Holders\n\n")
@@ -156,19 +157,22 @@ try:
                 readme_file.write(f"Holders with >1: {total_holders} ({total_holders - previous_df['total_holders'].iloc[-1]})\n")
                 readme_file.write(f"Holders with >11: {holders_gt_11} ({holders_gt_11 - previous_df['holders_gt_11'].iloc[-1]})\n")
                 readme_file.write(f"Holders with >111: {holders_gt_111} ({holders_gt_111 - previous_df['holders_gt_111'].iloc[-1]})\n")
-                readme_file.write(f"Mean balance: {df['Balance'].mean()} (previous {previous_df['mean_balance'].iloc[-1]})\n")
+                readme_file.write(f"Mean balance: {mean_balance} (previous {previous_mean_balance})\n")
             else:
                 readme_file.write(f"Holders with >1: {total_holders}\n")
                 readme_file.write(f"Holders with >11: {holders_gt_11}\n")
                 readme_file.write(f"Holders with >111: {holders_gt_111}\n")
-                readme_file.write(f"Mean balance: {df['Balance'].mean()}\n")
+                readme_file.write(f"Mean balance: {mean_balance}\n")
 
-            readme_file.write(f"## Holders Data\n")
-            readme_file.write(df.to_markdown())
-        
-        df['mean_balance'] = df['Balance'].mean()
-        df[['total_holders', 'holders_gt_11', 'holders_gt_111', 'mean_balance']].to_csv('previous_results.txt', index=False)
-        
+        new_summary_row = pd.DataFrame({
+            'total_holders': [total_holders],
+            'holders_gt_11': [holders_gt_11],
+            'holders_gt_111': [holders_gt_111],
+            'mean_balance': [mean_balance]
+        })
+
+        new_summary_row.to_csv('previous_results.txt', mode='a', header=not os.path.exists('previous_results.txt'), index=False)
+
         print("README.md updated successfully.")
     except Exception as e:
         print(f"Failed to update README.md: {e}")
