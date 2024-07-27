@@ -31,7 +31,7 @@ jobs:
     - name: Run all_time_holders.py
       run: python all_time_holders.py
 
-     - name: Update README.md with results
+    - name: Update README.md with results
       run: |
         total_holders=$(tail -n +2 data.csv | wc -l)
         holders_gt_11=$(awk -F ',' '$2 >= 11' data.csv | wc -l)
