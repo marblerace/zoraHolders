@@ -38,6 +38,7 @@ jobs:
     - name: Update README.md with results
       run: |
         echo "# Zora Report" > README.md
+        echo "## Last updated: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> README.md
         echo "## Results" >> README.md
         cat formatted_results.txt >> README.md
         echo "## Chart" >> README.md
