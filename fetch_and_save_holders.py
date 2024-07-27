@@ -12,11 +12,12 @@ holders_data = []
 
 # Function to fetch data
 def fetch_data(url):
-    response = requests.get(url, headers={'accept': 'application/json'})
-    if response.status_code == 200:
+    try:
+        response = requests.get(url, headers={'accept': 'application/json'})
+        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
         return response.json()
-    else:
-        print(f"Failed to fetch data. Status code: {response.status_code}")
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed: {e}")
         return None
 
 # Fetch the first page
@@ -39,8 +40,10 @@ if data and 'items' in data:
                 holders_data.extend([[item['address']['hash'], item['value']] for item in items])
                 print(f"Fetched page with params: {next_page_params}")
             else:
+                print("No more data found or failed to fetch data.")
                 break
         else:
+            print("No more pages to fetch.")
             break
 
 # Convert the list to a DataFrame
@@ -50,8 +53,9 @@ df = pd.DataFrame(holders_data, columns=['HolderAddress', 'Balance'])
 df.to_csv('data.csv', index=False)
 
 # Read or initialize progression data
-if os.path.exists('progression_data.csv'):
-    progression_df = pd.read_csv('progression_data.csv')
+progression_file = 'progression_data.csv'
+if os.path.exists(progression_file):
+    progression_df = pd.read_csv(progression_file)
 else:
     progression_df = pd.DataFrame(columns=['timestamp', 'total_holders', 'holders_gt_11', 'holders_gt_111'])
 
@@ -69,27 +73,36 @@ new_row = {
 progression_df = progression_df.append(new_row, ignore_index=True)
 
 # Save the progression data
-progression_df.to_csv('progression_data.csv', index=False)
+progression_df.to_csv(progression_file, index=False)
 
 # Plot the progression curve
-plt.figure(figsize=(10, 6))
-plt.plot(progression_df['timestamp'], progression_df['total_holders'], label='All Holders', color='black')
-plt.plot(progression_df['timestamp'], progression_df['holders_gt_11'], label='Holders >11', color='red')
-plt.plot(progression_df['timestamp'], progression_df['holders_gt_111'], label='Holders >111', color='blue')
-plt.xlabel('Time')
-plt.ylabel('Number of Holders')
-plt.title('Progression Curve')
-plt.legend()
-plt.xticks(rotation=45)
-plt.tight_layout()
-plt.savefig('progression_curve.png')
+try:
+    plt.figure(figsize=(10, 6))
+    plt.plot(progression_df['timestamp'], progression_df['total_holders'], label='All Holders', color='black')
+    plt.plot(progression_df['timestamp'], progression_df['holders_gt_11'], label='Holders >11', color='red')
+    plt.plot(progression_df['timestamp'], progression_df['holders_gt_111'], label='Holders >111', color='blue')
+    plt.xlabel('Time')
+    plt.ylabel('Number of Holders')
+    plt.title('Progression Curve')
+    plt.legend()
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig('progression_curve.png')
+    plt.close()
+    print("Progression curve graph saved successfully.")
+except Exception as e:
+    print(f"Failed to plot and save progression curve graph: {e}")
 
 # Update the README.md
-with open('README.md', 'w') as readme_file:
-    readme_file.write(f"# Zora Token Holders\n\n")
-    readme_file.write(f"## Last updated: {current_time}\n\n")
-    readme_file.write(f"Total holders: {total_holders}\n\n")
-    readme_file.write(f"## Holders Data\n")
-    readme_file.write(df.to_markdown())
+try:
+    with open('README.md', 'w') as readme_file:
+        readme_file.write(f"# Zora Token Holders\n\n")
+        readme_file.write(f"## Last updated: {current_time}\n\n")
+        readme_file.write(f"Total holders: {total_holders}\n\n")
+        readme_file.write(f"## Holders Data\n")
+        readme_file.write(df.to_markdown())
+    print("README.md updated successfully.")
+except Exception as e:
+    print(f"Failed to update README.md: {e}")
 
 print("Data fetching and saving completed. Saved to data.csv, progression_data.csv, and README.md updated.")
