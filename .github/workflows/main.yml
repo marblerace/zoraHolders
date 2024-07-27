@@ -33,7 +33,11 @@ jobs:
         echo "# Zora Report" > README.md
         echo "## Last updated: $(date -u +"%d-%m-%Y %H:%M")" >> README.md
         echo "## Results" >> README.md
-        awk '{print $0 "\n"}' results.txt >> README.md
+        echo "Holders with >1: $(cat results.txt | grep 'total_holders')" >> README.md
+        echo "Holders with >=11: $(cat results.txt```yaml
+        | grep 'holders_gt_11')" >> README.md
+        echo "Holders with >=111: $(cat results.txt | grep 'holders_gt_111')" >> README.md
+        echo "Mean balance: $(cat results.txt | grep 'mean_balance')" >> README.md
         echo "## Progression Curve - All Holders" >> README.md
         echo "![Progression Curve - All Holders](progression_curve_all.png)" >> README.md
         echo "## Progression Curve - Holders >=11" >> README.md
@@ -66,7 +70,7 @@ jobs:
       run: |
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
-        git add README.md progression_curve_all.png progression_curve_gt_11.png progression_curve_gt_111.png results.txt data.csv progression_data.csv previous_results.txt
+        git add README.md progression_curve_all.png progression_curve_gt_11.png progression_curve_gt_111.png data.csv progression_data.csv previous_results.txt
         if [ -n "$(git status --porcelain)" ]; then
           git commit -m 'Update README.md with Zora report and data'
           git push
