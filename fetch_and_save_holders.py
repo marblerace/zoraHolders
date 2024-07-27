@@ -81,30 +81,61 @@ try:
     progression_df.to_csv(progression_file, index=False)
     print("Progression data saved successfully.")
 
-    # Plot the progression curve
+    # Plot the progression curves
     try:
-        plt.figure(figsize=(10, 18))  # Making the figure three times higher
+        # Plot for all holders
+        plt.figure(figsize=(10, 6))
         plt.plot(progression_df['timestamp'], progression_df['total_holders'], label='All Holders', color='black')
+        plt.xlabel('Time')
+        plt.ylabel('Number of Holders')
+        plt.title('Progression Curve - All Holders')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.savefig('progression_curve_all.png')
+        plt.close()
+
+        # Plot for holders > 11
+        plt.figure(figsize=(10, 6))
         plt.plot(progression_df['timestamp'], progression_df['holders_gt_11'], label='Holders >11', color='red')
+        plt.xlabel('Time')
+        plt.ylabel('Number of Holders')
+        plt.title('Progression Curve - Holders >11')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.savefig('progression_curve_gt_11.png')
+        plt.close()
+
+        # Plot for holders > 111
+        plt.figure(figsize=(10, 6))
         plt.plot(progression_df['timestamp'], progression_df['holders_gt_111'], label='Holders >111', color='blue')
         plt.xlabel('Time')
         plt.ylabel('Number of Holders')
-        plt.title('Progression Curve')
-        plt.legend()
+        plt.title('Progression Curve - Holders >111')
         plt.xticks(rotation=45)
         plt.tight_layout()
-        plt.savefig('progression_curve.png')
+        plt.savefig('progression_curve_gt_111.png')
         plt.close()
-        print("Progression curve graph saved successfully.")
+
+        print("Progression curve graphs saved successfully.")
     except Exception as e:
-        print(f"Failed to plot and save progression curve graph: {e}")
+        print(f"Failed to plot and save progression curve graphs: {e}")
         traceback.print_exc()
 
     # Check if progression_curve.png exists
-    if os.path.exists('progression_curve.png'):
-        print("Progression curve graph file exists.")
+    if os.path.exists('progression_curve_all.png'):
+        print("Progression curve graph for all holders exists.")
     else:
-        print("Progression curve graph file does not exist.")
+        print("Progression curve graph for all holders does not exist.")
+
+    if os.path.exists('progression_curve_gt_11.png'):
+        print("Progression curve graph for holders >11 exists.")
+    else:
+        print("Progression curve graph for holders >11 does not exist.")
+
+    if os.path.exists('progression_curve_gt_111.png'):
+        print("Progression curve graph for holders >111 exists.")
+    else:
+        print("Progression curve graph for holders >111 does not exist.")
 
     # Update the README.md
     try:
