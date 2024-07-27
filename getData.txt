@@ -1,1 +1,0 @@
-https://explorer.zora.energy/csv-export?type=holders&address=0x7777777d57c1C6e472fa379b7b3B6c6ba3835073

@@ -34,6 +34,7 @@ jobs:
     - name: Update README.md with results
       run: |
         echo "# Zora Report" > README.md
+        echo "## Get Data from: https://explorer.zora.energy/csv-export?type=holders&address=0x7777777d57c1C6e472fa379b7b3B6c6ba3835073" >> README.md
         echo "## Results" >> README.md
         cat formatted_results.txt >> README.md
         echo "## Chart" >> README.md
