@@ -90,6 +90,7 @@ try:
         plt.ylabel('Number of Holders')
         plt.title('Progression Curve - All Holders')
         plt.xticks(rotation=45)
+        plt.yticks(range(0, max(progression_df['total_holders']) + 1, 1))
         plt.tight_layout()
         plt.savefig('progression_curve_all.png')
         plt.close()
@@ -101,6 +102,7 @@ try:
         plt.ylabel('Number of Holders')
         plt.title('Progression Curve - Holders >11')
         plt.xticks(rotation=45)
+        plt.yticks(range(0, max(progression_df['holders_gt_11']) + 1, 1))
         plt.tight_layout()
         plt.savefig('progression_curve_gt_11.png')
         plt.close()
@@ -112,6 +114,7 @@ try:
         plt.ylabel('Number of Holders')
         plt.title('Progression Curve - Holders >111')
         plt.xticks(rotation=45)
+        plt.yticks(range(0, max(progression_df['holders_gt_111']) + 1, 1))
         plt.tight_layout()
         plt.savefig('progression_curve_gt_111.png')
         plt.close()
@@ -139,12 +142,33 @@ try:
 
     # Update the README.md
     try:
+        previous_df = None
+        if os.path.exists('previous_results.txt'):
+            with open('previous_results.txt') as f:
+                previous_results = f.read()
+            previous_df = pd.read_csv(pd.compat.StringIO(previous_results), sep="\s\s+", engine='python')
+
         with open('README.md', 'w') as readme_file:
             readme_file.write(f"# Zora Token Holders\n\n")
             readme_file.write(f"## Last updated: {current_time}\n\n")
-            readme_file.write(f"Total holders: {total_holders}\n\n")
+
+            if previous_df is not None:
+                readme_file.write(f"Holders with >1: {total_holders} ({total_holders - previous_df['total_holders'].iloc[-1]})\n")
+                readme_file.write(f"Holders with >11: {holders_gt_11} ({holders_gt_11 - previous_df['holders_gt_11'].iloc[-1]})\n")
+                readme_file.write(f"Holders with >111: {holders_gt_111} ({holders_gt_111 - previous_df['holders_gt_111'].iloc[-1]})\n")
+                readme_file.write(f"Mean balance: {df['Balance'].mean()} (previous {previous_df['mean_balance'].iloc[-1]})\n")
+            else:
+                readme_file.write(f"Holders with >1: {total_holders}\n")
+                readme_file.write(f"Holders with >11: {holders_gt_11}\n")
+                readme_file.write(f"Holders with >111: {holders_gt_111}\n")
+                readme_file.write(f"Mean balance: {df['Balance'].mean()}\n")
+
             readme_file.write(f"## Holders Data\n")
             readme_file.write(df.to_markdown())
+        
+        df['mean_balance'] = df['Balance'].mean()
+        df[['total_holders', 'holders_gt_11', 'holders_gt_111', 'mean_balance']].to_csv('previous_results.txt', index=False)
+        
         print("README.md updated successfully.")
     except Exception as e:
         print(f"Failed to update README.md: {e}")
