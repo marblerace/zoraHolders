@@ -79,6 +79,7 @@ try:
 
     # Save the progression data
     progression_df.to_csv(progression_file, index=False)
+    print("Progression data saved successfully.")
 
     # Plot the progression curve
     try:
