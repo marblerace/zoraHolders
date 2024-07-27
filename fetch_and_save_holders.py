@@ -69,13 +69,13 @@ try:
     total_holders = df.shape[0]
     holders_gt_11 = df[df['Balance'] > 11].shape[0]
     holders_gt_111 = df[df['Balance'] > 111].shape[0]
-    new_row = {
-        'timestamp': current_time,
-        'total_holders': total_holders,
-        'holders_gt_11': holders_gt_11,
-        'holders_gt_111': holders_gt_111
-    }
-    progression_df = progression_df.append(new_row, ignore_index=True)
+    new_row = pd.DataFrame({
+        'timestamp': [current_time],
+        'total_holders': [total_holders],
+        'holders_gt_11': [holders_gt_11],
+        'holders_gt_111': [holders_gt_111]
+    })
+    progression_df = pd.concat([progression_df, new_row], ignore_index=True)
 
     # Save the progression data
     progression_df.to_csv(progression_file, index=False)
