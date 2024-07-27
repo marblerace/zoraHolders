@@ -1,5 +1,5 @@
-Total holders: 2024
-Holders with >5: 353
+Total holders: 2028
+Holders with >5: 354
 Holders with >10: 164
 Holders with >11: 139
 Holders with >25: 57
@@ -9,4 +9,4 @@ Holders with >111: 9
 Min balance: 1
 Max balance: 256
 Median balance: 2.0
-Mean balance: 5.153162055335969
+Mean balance: 5.145463510848126
