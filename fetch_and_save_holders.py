@@ -61,7 +61,6 @@ try:
         # Save the DataFrame to a CSV file
         df.to_csv('data.csv', index=False)
 
-        # Rest of your code to update progression data and plot graphs
         # Read or initialize progression data
         progression_file = 'progression_data.csv'
         if os.path.exists(progression_file):
@@ -86,53 +85,39 @@ try:
         progression_df.to_csv(progression_file, index=False)
         print("Progression data saved successfully.")
 
+        # Generate the results directly
+        mean_balance = df['Balance'].mean()
+        results = f"Holders with >1: {total_holders}\nHolders with >=11: {holders_gt_11}\nHolders with >=111: {holders_gt_111}\nMean balance: {mean_balance}\n"
+        with open('results.txt', 'w') as f:
+            f.write(results)
+
         # Plot the progression curves
+        def plot_curve(progression_df, column, title, color, file_name):
+            plt.figure(figsize=(10, 6))
+            plt.plot(progression_df['timestamp'], progression_df[column], label=title, color=color)
+            plt.xlabel('Time')
+            plt.ylabel('Number of Holders')
+            plt.title(f'Progression Curve - {title}')
+            plt.xticks(rotation=45)
+            plt.grid(True)
+            plt.ylim(progression_df[column].min(), progression_df[column].max())
+            yticks = progression_df[column].unique()
+            plt.yticks(yticks)
+            plt.tight_layout()
+            plt.savefig(file_name)
+            plt.close()
+
         try:
-            # Plot for all holders
-            plt.figure(figsize=(10, 6))
-            plt.plot(progression_df['timestamp'], progression_df['total_holders'], label='All Holders', color='black')
-            plt.xlabel('Time')
-            plt.ylabel('Number of Holders')
-            plt.title('Progression Curve - All Holders')
-            plt.xticks(rotation=45)
-            plt.yticks(range(progression_df['total_holders'].min(), progression_df['total_holders'].max() + 1))
-            plt.grid(True)
-            plt.tight_layout()
-            plt.savefig('progression_curve_all.png')
-            plt.close()
-
-            # Plot for holders >= 11
-            plt.figure(figsize=(10, 6))
-            plt.plot(progression_df['timestamp'], progression_df['holders_gt_11'], label='Holders >=11', color='red')
-            plt.xlabel('Time')
-            plt.ylabel('Number of Holders')
-            plt.title('Progression Curve - Holders >=11')
-            plt.xticks(rotation=45)
-            plt.yticks(range(progression_df['holders_gt_11'].min(), progression_df['holders_gt_11'].max() + 1))
-            plt.grid(True)
-            plt.tight_layout()
-            plt.savefig('progression_curve_gt_11.png')
-            plt.close()
-
-            # Plot for holders >= 111
-            plt.figure(figsize=(10, 6))
-            plt.plot(progression_df['timestamp'], progression_df['holders_gt_111'], label='Holders >=111', color='blue')
-            plt.xlabel('Time')
-            plt.ylabel('Number of Holders')
-            plt.title('Progression Curve - Holders >=111')
-            plt.xticks(rotation=45)
-            plt.yticks(range(progression_df['holders_gt_111'].min(), progression_df['holders_gt_111'].max() + 1))
-            plt.grid(True)
-            plt.tight_layout()
-            plt.savefig('progression_curve_gt_111.png')
-            plt.close()
+            plot_curve(progression_df, 'total_holders', 'All Holders', 'black', 'progression_curve_all.png')
+            plot_curve(progression_df, 'holders_gt_11', 'Holders >=11', 'red', 'progression_curve_gt_11.png')
+            plot_curve(progression_df, 'holders_gt_111', 'Holders >=111', 'blue', 'progression_curve_gt_111.png')
 
             print("Progression curve graphs saved successfully.")
         except Exception as e:
             print(f"Failed to plot and save progression curve graphs: {e}")
             traceback.print_exc()
 
-        print("Data fetching and saving completed. Saved to data.csv, progression_data.csv, and README.md updated.")
+        print("Data fetching and saving completed. Saved to data.csv, progression_data.csv, and results.txt updated.")
     else:
         print("Data fetching halted due to server error; data.csv not updated.")
 
