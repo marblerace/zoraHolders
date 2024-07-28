@@ -38,6 +38,9 @@ try:
                 index = next_page_params.get('index')
                 next_page_url = f"{base_url}?block_number={block_number}&index={index}"
                 data = fetch_data(next_page_url)
+                if data is None:
+                    print("Stopping further data fetching due to error.")
+                    break
                 page_number += 1
             else:
                 print("No more pages to fetch.")
@@ -47,11 +50,14 @@ try:
             break
 
     # Convert the set to a DataFrame
-    df = pd.DataFrame(list(unique_addresses), columns=['HolderAddress'])
+    if data is not None:
+        df = pd.DataFrame(list(unique_addresses), columns=['HolderAddress'])
 
-    # Save the DataFrame to a CSV file
-    df.to_csv('holders.csv', index=False)
-    print("Data fetching and saving completed. Saved to holders.csv.")
+        # Save the DataFrame to a CSV file
+        df.to_csv('holders.csv', index=False)
+        print("Data fetching and saving completed. Saved to holders.csv.")
+    else:
+        print("Data fetching halted due to server error; holders.csv not updated.")
 
 except Exception as e:
     print(f"An error occurred: {e}")
