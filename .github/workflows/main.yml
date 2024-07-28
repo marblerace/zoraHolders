@@ -39,20 +39,19 @@ jobs:
         mean_balance=$(awk -F ',' '{sum+=$2} END {print sum/NR}' data.csv)
         addresses_held_once=$(tail -n +2 holders.csv | wc -l)
         
-        echo "# Zora Report" > README.md
-        echo "## Report of bought mints on Zora" >> README.md
+        echo "# Report of bought mints on Zora" > README.md
         echo "## Last updated: $(date -u +"%d-%m-%Y %H:%M")" >> README.md
-        echo "Addresses which held mint at least once: $addresses_held_once" >> README.md
+        echo "Addresses which minted with mint or sent mint at least once: $addresses_held_once" >> README.md
         echo "" >> README.md
         echo "## Current holders:" >> README.md
         while IFS= read -r line; do echo "$line  "; done < results.txt >> README.md
         echo "" >> README.md
         echo "## Progression Curve - All Holders" >> README.md
-        echo "![Progression Curve - All Holders](progression_curve_all.png)" >> README.md
-        echo "## Progression Curve - Holders >=11" >> README.md
-        echo "![Progression Curve - Holders >=11](progression_curve_gt_11.png)" >> README.md
-        echo "## Progression Curve - Holders >=111" >> README.md
-        echo "![Progression Curve - Holders >=111](progression_curve_gt_111.png)" >> README.md
+        echo "![addresses with >= 1 mint](progression_curve_all.png)" >> README.md
+        echo "## Progression Curve - Holders >= 11" >> README.md
+        echo "![addresses with >= 11 mints](progression_curve_gt_11.png)" >> README.md
+        echo "## Progression Curve - Holders >= 111" >> README.md
+        echo "![addresses with >= 111 mints](progression_curve_gt_111.png)" >> README.md
 
     - name: Check for generated files
       run: |
