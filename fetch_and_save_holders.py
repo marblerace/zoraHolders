@@ -87,7 +87,7 @@ try:
 
         # Generate the results directly
         mean_balance = df['Balance'].mean()
-        results = f"Holders with >1: {total_holders}\nHolders with >=11: {holders_gt_11}\nHolders with >=111: {holders_gt_111}\nMean balance: {mean_balance}\n"
+        results = f"Holders with > 1: {total_holders}\nHolders with >= 11: {holders_gt_11}\nHolders with >= 111: {holders_gt_111}\nMean balance: {mean_balance}\n"
         with open('results.txt', 'w') as f:
             f.write(results)
 
@@ -108,9 +108,9 @@ try:
             plt.close()
 
         try:
-            plot_curve(progression_df, 'total_holders', 'All Holders', 'black', 'progression_curve_all.png')
-            plot_curve(progression_df, 'holders_gt_11', 'Holders >=11', 'red', 'progression_curve_gt_11.png')
-            plot_curve(progression_df, 'holders_gt_111', 'Holders >=111', 'blue', 'progression_curve_gt_111.png')
+            plot_curve(progression_df, 'total_holders', 'addresses with >= 1 mints', 'black', 'progression_curve_all.png')
+            plot_curve(progression_df, 'holders_gt_11', 'addresses with >= 11 mints', 'red', 'progression_curve_gt_11.png')
+            plot_curve(progression_df, 'holders_gt_111', 'addresses with >= 111 mints', 'blue', 'progression_curve_gt_111.png')
 
             print("Progression curve graphs saved successfully.")
         except Exception as e:
