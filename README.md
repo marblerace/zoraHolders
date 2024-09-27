@@ -1,12 +1,12 @@
 # Report of bought mints on Zora
-## Last updated: 26-09-2024 18:56
-Addresses which minted with mint or sent mint at least once: 6173
+## Last updated: 27-09-2024 02:18
+Addresses which minted with mint or sent mint at least once: 6177
 
 ## Current holders:
-Holders with > 1: 1781  
+Holders with > 1: 1786  
 Holders with >= 11: 125  
 Holders with >= 111: 12  
-Mean balance: 4.43627175743964  
+Mean balance: 4.4266517357222845  
 
 ## Progression Curve - All Holders
 ![addresses with >= 1 mint](progression_curve_all.png)
