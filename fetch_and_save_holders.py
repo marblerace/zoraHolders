@@ -4,6 +4,7 @@ import datetime
 import matplotlib.pyplot as plt
 import os
 import traceback
+import matplotlib.dates as mdates
 
 # API base URL for the first page
 base_url = "https://explorer.zora.energy/api/v2/tokens/0x7777777d57c1C6e472fa379b7b3B6c6ba3835073/holders"
@@ -94,20 +95,49 @@ try:
         # Plot the progression curves
         def plot_curve(progression_df, column, title, color, file_name):
             plt.figure(figsize=(10, 6))
+            
+            # Plot the progression data
             plt.plot(progression_df['timestamp'], progression_df[column], label=title, color=color)
+
+            # Set x-axis to only show 1st and 15th of each month
+            plt.gca().xaxis.set_major_locator(mdates.MonthLocator(bymonthday=(1, 15)))
+            plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d-%b'))
+
+            # Remove horizontal and vertical bars
+            plt.grid(False)
+
+            # Set y-axis ticks to max, min, and intervals of 100
+            max_val = progression_df[column].max()
+            min_val = progression_df[column].min()
+            
+            # Find closest lower and upper values in steps of 100
+            yticks = list(range(int(min_val) - (int(min_val) % 100), int(max_val) + 100, 100))
+            plt.yticks(yticks)
+
+            # Add horizontal grid lines only for the y-ticks
+            plt.gca().yaxis.grid(True, which='major', linestyle='--', color='gray')
+
+            # Add vertical grid lines only for the 1st and 15th of each month
+            plt.gca().xaxis.grid(True, which='major', linestyle='--', color='gray')
+
+            # Set labels and title
             plt.xlabel('Time')
             plt.ylabel('Number of Holders')
             plt.title(f'Progression Curve - {title}')
+            
+            # Rotate x-axis labels for better readability
             plt.xticks(rotation=45)
-            plt.grid(True)
-            plt.ylim(progression_df[column].min(), progression_df[column].max())
-            yticks = progression_df[column].unique()
-            plt.yticks(yticks)
+
+            # Set the y-axis limits to min and max of the data
+            plt.ylim(min_val, max_val)
+
+            # Save the figure
             plt.tight_layout()
             plt.savefig(file_name)
             plt.close()
 
         try:
+            # Sample usage of the function
             plot_curve(progression_df, 'total_holders', 'addresses with >= 1 mints', 'black', 'progression_curve_all.png')
             plot_curve(progression_df, 'holders_gt_11', 'addresses with >= 11 mints', 'red', 'progression_curve_gt_11.png')
             plot_curve(progression_df, 'holders_gt_111', 'addresses with >= 111 mints', 'blue', 'progression_curve_gt_111.png')
