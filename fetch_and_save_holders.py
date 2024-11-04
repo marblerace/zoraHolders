@@ -93,7 +93,7 @@ try:
             f.write(results)
 
         # Plot the progression curves
-        def plot_curve(progression_df, column, title, color, file_name):
+        def plot_curve(progression_df, column, title, color, file_name, ytick_interval):
             plt.figure(figsize=(10, 6))
             
             # Plot the progression data
@@ -103,15 +103,15 @@ try:
             plt.gca().xaxis.set_major_locator(mdates.MonthLocator(bymonthday=(1, 15)))
             plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d-%b'))
 
-            # Remove horizontal and vertical bars
+            # Remove horizontal and vertical bars (main grid)
             plt.grid(False)
 
-            # Set y-axis ticks to max, min, and intervals of 100
+            # Set y-axis ticks based on the specified interval (hundreds, tens, or integers)
             max_val = progression_df[column].max()
             min_val = progression_df[column].min()
             
-            # Find closest lower and upper values in steps of 100
-            yticks = list(range(int(min_val) - (int(min_val) % 100), int(max_val) + 100, 100))
+            # Generate y-ticks based on the specified interval
+            yticks = list(range(int(min_val) - (int(min_val) % ytick_interval), int(max_val) + ytick_interval, ytick_interval))
             plt.yticks(yticks)
 
             # Add horizontal grid lines only for the y-ticks
@@ -137,10 +137,10 @@ try:
             plt.close()
 
         try:
-            # Sample usage of the function
-            plot_curve(progression_df, 'total_holders', 'addresses with >= 1 mints', 'black', 'progression_curve_all.png')
-            plot_curve(progression_df, 'holders_gt_11', 'addresses with >= 11 mints', 'red', 'progression_curve_gt_11.png')
-            plot_curve(progression_df, 'holders_gt_111', 'addresses with >= 111 mints', 'blue', 'progression_curve_gt_111.png')
+            # Sample usage of the function with different y-tick intervals
+            plot_curve(progression_df, 'total_holders', 'addresses with >= 1 mints', 'black', 'progression_curve_all.png', 100)
+            plot_curve(progression_df, 'holders_gt_11', 'addresses with >= 11 mints', 'red', 'progression_curve_gt_11.png', 10)
+            plot_curve(progression_df, 'holders_gt_111', 'addresses with >= 111 mints', 'blue', 'progression_curve_gt_111.png', 1)
 
             print("Progression curve graphs saved successfully.")
         except Exception as e:
