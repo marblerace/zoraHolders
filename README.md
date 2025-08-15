@@ -1,5 +1,5 @@
 # Report of bought mints on Zora
-## Last updated: 14-08-2025 20:02
+## Last updated: 15-08-2025 02:28
 Addresses which minted with mint or sent mint at least once: 0
 
 ## Current holders:
