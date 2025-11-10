@@ -1,5 +1,5 @@
 # Report of bought mints on Zora
-## Last updated: 09-11-2025 18:53
+## Last updated: 10-11-2025 02:33
 Addresses which minted with mint or sent mint at least once: 6236
 
 ## Current holders:
