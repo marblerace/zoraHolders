@@ -4,7 +4,6 @@ import datetime
 import matplotlib.pyplot as plt
 import os
 import traceback
-import matplotlib.dates as mdates
 
 # API base URL for the first page
 base_url = "https://explorer.zora.energy/api/v2/tokens/0x7777777d57c1C6e472fa379b7b3B6c6ba3835073/holders"
@@ -92,44 +91,53 @@ try:
         with open('results.txt', 'w') as f:
             f.write(results)
 
-        # Plot the progression curves
-        def plot_curve(progression_df, column, title, color, file_name, ytick_interval):
-            plt.figure(figsize=(10, 6))
-            
-            # Plot the progression data
-            plt.plot(progression_df['timestamp'], progression_df[column], label=title, color=color)
+        # Prepare timestamps for plotting
+        progression_df['timestamp_dt'] = pd.to_datetime(progression_df['timestamp'], format='%d-%m-%Y %H:%M')
 
-            # Set x-axis to only show 1st and 15th of each month
-            plt.gca().xaxis.set_major_locator(mdates.MonthLocator(bymonthday=(1, 15)))
-            plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d-%b'))
+        # Plot the progression curves
+        def plot_curve(progression_df, column, title, color, file_name, ytick_values=None):
+            plt.figure(figsize=(10, 6))
+
+            # Plot the progression data using real datetimes for the x-axis
+            times = progression_df['timestamp_dt']
+            values = progression_df[column]
+            plt.plot(times, values, label=title, color=color)
+
+            # Build x-ticks: first check of each month, labeled with the month name
+            month_starts = (
+                progression_df.sort_values('timestamp_dt')
+                .groupby(progression_df['timestamp_dt'].dt.to_period('M'))['timestamp_dt']
+                .first()
+            )
+            plt.xticks(month_starts.values, [dt.strftime('%b') for dt in month_starts.values], rotation=45)
 
             # Remove horizontal and vertical bars (main grid)
             plt.grid(False)
 
-            # Set y-axis ticks based on the specified interval (hundreds, tens, or integers)
-            max_val = progression_df[column].max()
-            min_val = progression_df[column].min()
-            
-            # Generate y-ticks based on the specified interval
-            yticks = list(range(int(min_val) - (int(min_val) % ytick_interval), int(max_val) + ytick_interval, ytick_interval))
+            max_val = values.max()
+            min_val = values.min()
+
+            # Generate y-ticks: either custom values or every integer in range
+            if ytick_values is None:
+                yticks = list(range(int(min_val), int(max_val) + 1))
+            else:
+                yticks = ytick_values
+
+            y_min = min(min_val, min(yticks))
+            y_max = max(max_val, max(yticks))
+
             plt.yticks(yticks)
 
             # Add horizontal grid lines only for the y-ticks
             plt.gca().yaxis.grid(True, which='major', linestyle='--', color='gray')
 
-            # Add vertical grid lines only for the 1st and 15th of each month
-            plt.gca().xaxis.grid(True, which='major', linestyle='--', color='gray')
-
             # Set labels and title
             plt.xlabel('Time')
             plt.ylabel('Number of Holders')
             plt.title(f'Progression Curve - {title}')
-            
-            # Rotate x-axis labels for better readability
-            plt.xticks(rotation=45)
 
-            # Set the y-axis limits to min and max of the data
-            plt.ylim(min_val, max_val)
+            # Apply the y-axis limits after ticks are defined
+            plt.ylim(y_min, y_max)
 
             # Save the figure
             plt.tight_layout()
@@ -138,9 +146,9 @@ try:
 
         try:
             # Sample usage of the function with different y-tick intervals
-            plot_curve(progression_df, 'total_holders', 'addresses with >= 1 mints', 'black', 'progression_curve_all.png', 100)
-            plot_curve(progression_df, 'holders_gt_11', 'addresses with >= 11 mints', 'red', 'progression_curve_gt_11.png', 10)
-            plot_curve(progression_df, 'holders_gt_111', 'addresses with >= 111 mints', 'blue', 'progression_curve_gt_111.png', 1)
+            plot_curve(progression_df, 'total_holders', 'addresses with >= 1 mints', 'black', 'progression_curve_all.png', [1800, 1900, 2000, 2100])
+            plot_curve(progression_df, 'holders_gt_11', 'addresses with >= 11 mints', 'red', 'progression_curve_gt_11.png', [120, 130, 140, 150, 160])
+            plot_curve(progression_df, 'holders_gt_111', 'addresses with >= 111 mints', 'blue', 'progression_curve_gt_111.png', None)
 
             print("Progression curve graphs saved successfully.")
         except Exception as e:
