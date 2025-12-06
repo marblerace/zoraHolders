@@ -104,12 +104,11 @@ try:
             plt.plot(times, values, label=title, color=color)
 
             # Build x-ticks: first check of each month, labeled with the month name
-            month_starts = (
-                progression_df.sort_values('timestamp_dt')
-                .groupby(progression_df['timestamp_dt'].dt.to_period('M'))['timestamp_dt']
-                .first()
-            )
-            plt.xticks(month_starts.values, [dt.strftime('%b') for dt in month_starts.values], rotation=45)
+            df_for_ticks = progression_df.dropna(subset=['timestamp_dt']).sort_values('timestamp_dt')
+            month_starts = df_for_ticks.groupby(df_for_ticks['timestamp_dt'].dt.to_period('M'))['timestamp_dt'].first()
+            month_positions = pd.to_datetime(month_starts.values)
+            month_labels = month_starts.dt.strftime('%b')
+            plt.xticks(month_positions, month_labels, rotation=45)
 
             # Remove horizontal and vertical bars (main grid)
             plt.grid(False)
