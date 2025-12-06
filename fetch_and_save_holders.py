@@ -132,7 +132,7 @@ try:
             plt.gca().yaxis.grid(True, which='major', linestyle='--', color='gray')
 
             # Set labels and title
-            plt.xlabel('Time')
+            plt.xlabel('Date')
             plt.ylabel('Number of Holders')
             plt.title(f'Progression Curve - {title}')
 
